@@ -27,7 +27,7 @@ namespace pdbget
             if (options.List == null)
             {
                 stream = Console.OpenStandardInput();
-                Logger.Info("Enter PDB or UniProt entries to download, press Ctrl+Z and then Enter to exit");
+                Logger.Info("Enter PDB or UniProt entries to download, press Ctrl+Z and then Enter to exit\n");
             }
             else
             {

@@ -1,0 +1,90 @@
+name: .NET Release
+
+on:
+  push:
+    tags: [ "v*" ]
+  pull_request:
+    tags: [ "v*" ]
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Publish Release for Linux
+      run: dotnet publish -c release --no-self-contained -r linux-x64 -p:Platform="Any CPU" -p:PublishSingleFile=true
+
+    - name: Publish Release for Windows
+      run: dotnet publish -c release --no-self-contained -r win-x64 -p:Platform="Any CPU" -p:PublishSingleFile=true -p:PublishReadyToRun=true
+
+    - name: Publish Release for OSX
+      run: dotnet publish -c release --no-self-contained -r osx-x64 -p:Platform="Any CPU" -p:PublishSingleFile=true
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## Release Note
+
+          Please refer to the commit messages for what's new in this release. We provide prebuilt binaries here for the x86-64 architecture as-is without any warranty. Follow the developer's guide on the project readme should you need to customize your build or for any other architecture.
+
+          ### Deployment guide
+
+          The prebuilt binaries are provided as-is. Download the binary file for your certain system, place it in a binary path with a short name.
+          e.g.
+
+          On Windows: C:\WINDOWS\system32\pdbget.exe
+          On Linux/MacOS: /usr/bin/pdbget
+
+          ### Prerequisite
+
+          * .NET 5.0 SDK or runtime: Follow [the official guide](https://dotnet.microsoft.com/download/dotnet/5.0) to install.
+        draft: false
+        prerelease: false
+
+    - name: Upload Asset for Linux
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./bin/release/net5.0/linux-x64/publish/pdbget"
+        asset_name: pdbget_linux_x64
+        asset_content_type: application/x-executable
+
+    - name: Upload Asset for Windows
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./bin/release/net5.0/win-x64/publish/pdbget.exe"
+        asset_name: pdbget_win_x64.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
+
+    - name: Upload Asset for OSX
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./bin/release/net5.0/osx-x64/publish/pdbget"
+        asset_name: pdbget_mac_x64
+        asset_content_type: application/mac-binhex40

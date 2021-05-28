@@ -1,0 +1,77 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/pdbget/pdbget.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "publish-win-x64",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/pdbget/pdbget.csproj",
+                "-c=Release",
+                "--no-self-contained",
+                "-r=win-x64",
+                "-p:PublishSingleFile=true",
+                "-p:PublishReadyToRun=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish-linux-x64",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/pdbget/pdbget.csproj",
+                "-c=Release",
+                "--no-self-contained",
+                "-r=linux-x64",
+                "-p:PublishSingleFile=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish-mac-x64",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/pdbget/pdbget.csproj",
+                "-c=Release",
+                "--no-self-contained",
+                "-r=osx-x64",
+                "-p:PublishSingleFile=true",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "${workspaceFolder}/pdbget/pdbget.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

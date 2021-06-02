@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "pdbget": {
-      "commandName": "Project",
-      "commandLineArgs": "-sfy -O nolabel"
-    }
-  }
-}

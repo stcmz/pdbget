@@ -54,40 +54,64 @@ Thanks to the complete cross-platform nature of the SDK, one can target any supp
 
 ### Build for Linux
 
-To compile for Linux on any supported system, simply run
-```
-dotnet publish -c release --no-self-contained -r linux-x64 -p:Platform="Any CPU" -p:PublishSingleFile=true
+To compile for Linux on any supported system, simply run either of
+```Powershell
+# Dynamic build, will require installation of .NET Runtime/SDK
+dotnet publish -c release --no-self-contained -r linux-x64 -p:UseAppHost=true
+
+# Static build, no .NET Runtime/SDK is required
+dotnet publish -c release --self-contained -r linux-x64 -p:UseAppHost=true -p:PublishTrimmed=true
 ```
 
-Or with MSBuild, simply run
-```
-msbuild /t:Restore;Clean;Build;Publish /p:Configuration=Release /p:Platform="Any CPU" /p:PublishProfile=LinuxFolderProfile
+Or with MSBuild, simply run either of
+```Powershell
+# Dynamic build, will require installation of .NET Runtime/SDK
+msbuild /t:"Restore;Clean;Build;Publish" /p:Configuration=Release /p:PublishProfile=LinuxFolderProfile
+
+# Static build, no .NET Runtime/SDK is required
+msbuild /t:"Restore;Clean;Build;Publish" /p:Configuration=Release /p:PublishProfile=LinuxFolderProfile_static
 ```
 
 ### Build for Windows
 
-To compile for Windows on any supported system, simply run
-```
-dotnet publish -c release --no-self-contained -r win-x64 -p:Platform="Any CPU" -p:PublishSingleFile=true -p:PublishReadyToRun=true
+To compile for Windows on any supported system, simply run either of
+```Powershell
+# Dynamic build, will require installation of .NET Runtime/SDK
+dotnet publish -c release --no-self-contained -r win-x64 -p:UseAppHost=true -p:PublishReadyToRun=true
+
+# Static build, no .NET Runtime/SDK is required
+dotnet publish -c release --self-contained -r win-x64 -p:UseAppHost=true -p:PublishTrimmed=true -p:PublishReadyToRun=true
 ```
 
-Or with MSBuild, simply run
-```
-msbuild /t:Restore;Clean;Build;Publish /p:Configuration=Release /p:Platform="Any CPU" /p:PublishProfile=WinFolderProfile
+Or with MSBuild, simply run either of
+```Powershell
+# Dynamic build, will require installation of .NET Runtime/SDK
+msbuild /t:"Restore;Clean;Build;Publish" /p:Configuration=Release /p:PublishProfile=WinFolderProfile
+
+# Static build, no .NET Runtime/SDK is required
+msbuild /t:"Restore;Clean;Build;Publish" /p:Configuration=Release /p:PublishProfile=WinFolderProfile_static
 ```
 
-Kindly note that, the `PublishReadyToRun` option is only available while building from on Windows.
+Kindly note that, the `PublishReadyToRun` option is only available while building on Windows.
 
 ### Build for macOS
 
-To compile for macOS on any supported system, simply run
-```
-dotnet publish -c release --no-self-contained -r osx-x64 -p:Platform="Any CPU" -p:PublishSingleFile=true
+To compile for macOS on any supported system, simply run either of
+```PowerShell
+# Dynamic build, will require installation of .NET Runtime/SDK
+dotnet publish -c release --no-self-contained -r osx-x64 -p:UseAppHost=true
+
+# Static build, no .NET Runtime/SDK is required
+dotnet publish -c release --self-contained -r osx-x64 -p:UseAppHost=true -p:PublishTrimmed=true
 ```
 
-Or with MSBuild, simply run
-```
-msbuild /t:Restore;Clean;Build;Publish /p:Configuration=Release /p:Platform="Any CPU" /p:PublishProfile=MacFolderProfile
+Or with MSBuild, simply run either of
+```PowerShell
+# Dynamic build, will require installation of .NET Runtime/SDK
+msbuild /t:"Restore;Clean;Build;Publish" /p:Configuration=Release /p:PublishProfile=MacFolderProfile
+
+# Static build, no .NET Runtime/SDK is required
+msbuild /t:"Restore;Clean;Build;Publish" /p:Configuration=Release /p:PublishProfile=MacFolderProfile_static
 ```
 
 Usage

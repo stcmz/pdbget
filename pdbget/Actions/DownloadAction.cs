@@ -14,6 +14,8 @@ namespace pdbget
     {
         public DownloadParameters? Parameters { get; private set; }
 
+        private SemaphoreSlim? _downloadThreads;
+
         public int Setup(DownloadOptions options)
         {
             // Default output directory to work directory if not set
@@ -34,12 +36,7 @@ namespace pdbget
                 stream = options.List.OpenRead();
             }
 
-            ThreadPool.GetMaxThreads(out int _, out int ioThreads);
-
-            if (!ThreadPool.SetMaxThreads(options.Threads, ioThreads))
-            {
-                Logger.Warning($"Unable to set maximum worker threads to {options.Threads}");
-            }
+            _downloadThreads = new SemaphoreSlim(options.Threads);
 
             string? tmpDir = Path.GetTempFileName();
             File.Delete(tmpDir);
@@ -520,7 +517,11 @@ namespace pdbget
 
                 try
                 {
+                    _downloadThreads?.Wait();
+
                     rcsb.DownloadPdb(pdbFileName);
+
+                    _downloadThreads?.Release();
 
                     if (exists)
                     {

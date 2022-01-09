@@ -4,7 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
+using System.Threading;
 
 namespace pdbget.Services
 {
@@ -22,8 +23,31 @@ namespace pdbget.Services
         {
             string? uri = $"{Uri}.pdb";
 
-            using var wc = new WebClient();
-            wc.DownloadFile(uri, fileName);
+            int[]? waitTime = new int[] { 0, 500, 2000 };
+            bool succeeded = false;
+
+            for (int i = 0; !succeeded; i++)
+            {
+                if (waitTime[i] > 0)
+                {
+                    //Logger.Warning($"[RCSB] Failed to download {Uri}, retry in {waitTime[i]}ms");
+                    Thread.Sleep(waitTime[i]);
+                }
+
+                try
+                {
+                    using var wc = new HttpClient();
+                    using var stream = wc.GetStreamAsync(uri).Result;
+                    using var file = File.Create(fileName);
+                    stream.CopyTo(file);
+                    succeeded = true;
+                }
+                catch (Exception)
+                {
+                    if (i == waitTime.Length - 1)
+                        throw;
+                }
+            }
         }
 
         public bool SplitPdbChains(string pdbFileName, string outputDir, bool entryPrefix, bool overwrite, bool copyComments = false)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -29,12 +29,7 @@ namespace pdbget.Services
 
             for (int i = 0; html == null; i++)
             {
-                if (i == 3)
-                {
-                    return null;
-                }
-
-                if (i > 0 && i < 3)
+                if (waitTime[i] > 0)
                 {
                     //Logger.Warning($"[UniProt] Failed to get html for {Entry}, retry in {waitTime[i]}ms");
                     Thread.Sleep(waitTime[i]);
@@ -42,11 +37,13 @@ namespace pdbget.Services
 
                 try
                 {
-                    using var wc = new WebClient();
-                    html = wc.DownloadString(Uri);
+                    using var wc = new HttpClient();
+                    html = wc.GetStringAsync(Uri).Result;
                 }
                 catch (Exception)
                 {
+                    if (i == waitTime.Length - 1)
+                        return null;
                 }
             }
             return html;

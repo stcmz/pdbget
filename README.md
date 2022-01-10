@@ -122,24 +122,25 @@ Usage
 First add pdbget to the PATH environment variable or place pdbget in a PATH location (e.g. C:\Windows\System32\ or /usr/local/bin).
 
 To display a full list of available options, simply run the program with the `--help` argument
-```
+```bash
 pdbget --help
 ```
 
 ### Default layout
 
 Simply run pdbget without any arguments from a command line:
-```
+```bash
 pdbget
 ```
+
 and input entries one by one or line by line, for example:
-```
+```bash
 6PT0 4XT1
 Q9Y5Y4
 ```
 
 This will result in output layout:
-```
+```bash
 ./6PT0.pdb
 ./4XT1.pdb
 ./Q9Y5Y4/6D26.pdb
@@ -149,11 +150,12 @@ This will result in output layout:
 ### Flattened layout
 
 Adding the `-f` or `--flatten` option
-```
+```bash
 pdbget -f
 ```
+
 will force pdbget to eliminate the indirection level in the layout hierarchy. Taking the above example, the output will become:
-```
+```bash
 ./6PT0.pdb
 ./4XT1.pdb
 ./6D26.pdb
@@ -163,11 +165,12 @@ will force pdbget to eliminate the indirection level in the layout hierarchy. Ta
 ### Splitting
 
 Adding the `-s` or `--split` option
-```
+```bash
 pdbget -s
 ```
+
 will ask pdbget to split every requested PDB into separate fragment PDB files of protein chains and small molecules. Taking the above example, the output will become:
-```
+```bash
 ./4XT1/4XT1.pdb
 ./4XT1/A_AminoAcids.pdb
 ./4XT1/...
@@ -185,6 +188,7 @@ will ask pdbget to split every requested PDB into separate fragment PDB files of
 ./Q9Y5Y4/6D27...
 ./Q9Y5Y4/6D27/A_YCM_2308.pdb
 ```
+
 Water molecules are excluded automatically.
 
 In case the split option is on, the `-O` or `--original` option can be used to control where to place the original PDB files. Available values for the option includes:
@@ -196,18 +200,20 @@ In case the split option is on, the `-O` or `--original` option can be used to c
 ### Labelled layout
 
 Every input line of entries can have a label indicated by a colon separator. By using a label, pdbget creates a grouping folder named after the label and layouts the hierarchy for the corresponding entries in that folder. For example:
-```
+```bash
 3CL pro: 5R7Y 5R80
 GPCR: 6PT0 Q9Y5Y4
 ```
+
 will resulting
-```
+```bash
 ./3CL pro/5R7Y.pdb
 ./3CL pro/5R80.pdb
 ./GPCR/6PT0.pdb
 ./GPCR/Q9Y5Y4/6D26.pdb
 ./GPCR/Q9Y5Y4/6D27.pdb
 ```
+
 One can combine the split and flatten options with labels.
 
 

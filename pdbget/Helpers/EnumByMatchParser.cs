@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace pdbget.Helpers
 {
-    public static class EnumByMatchParser<T>
-        where T : notnull, Enum
+    public static class EnumByMatchParser<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)]TEnum>
+        where TEnum : notnull, Enum
     {
-        static IEnumerable<TAttribute> GetAttributes<TAttribute>(T enumValue)
+        static IEnumerable<TAttribute> GetAttributes<TAttribute>(TEnum enumValue)
         {
-            return EnumAnnotationHelper<T>.GetAttributes<TAttribute>(enumValue);
+            return EnumAnnotationHelper<TEnum>.GetAttributes<TAttribute>(enumValue);
         }
 
-        static readonly IDictionary<string, T> _ciSynonymDict = EnumAnnotationHelper<T>
+        static readonly IDictionary<string, TEnum> _ciSynonymDict = EnumAnnotationHelper<TEnum>
             .Enums
             .SelectMany(o => GetAttributes<MatchAttribute>(o)
                 .Where(p => !p.CaseSensitive && !p.UseRegex)
@@ -23,7 +24,7 @@ namespace pdbget.Helpers
             )
             .ToDictionary(o => o.synonym, o => o.value);
 
-        static readonly IDictionary<string, T> _csSynonymDict = EnumAnnotationHelper<T>
+        static readonly IDictionary<string, TEnum> _csSynonymDict = EnumAnnotationHelper<TEnum>
             .Enums
             .SelectMany(o => GetAttributes<MatchAttribute>(o)
                 .Where(p => p.CaseSensitive && !p.UseRegex)
@@ -33,7 +34,7 @@ namespace pdbget.Helpers
             )
             .ToDictionary(o => o.synonym, o => o.value);
 
-        static readonly IList<(Regex regex, T value)> _regexSynonymList = EnumAnnotationHelper<T>
+        static readonly IList<(Regex regex, TEnum value)> _regexSynonymList = EnumAnnotationHelper<TEnum>
             .Enums
             .SelectMany(o => GetAttributes<MatchAttribute>(o)
                 .Where(p => p.UseRegex)
@@ -42,13 +43,13 @@ namespace pdbget.Helpers
             )
             .ToArray();
 
-        public static T Parse(string s)
+        public static TEnum Parse(string s)
         {
-            TryParse(s, out T enumValue);
+            TryParse(s, out TEnum enumValue);
             return enumValue;
         }
 
-        public static bool TryParse(string s, out T enumValue)
+        public static bool TryParse(string s, out TEnum enumValue)
         {
             if (s == null)
             {
@@ -66,7 +67,7 @@ namespace pdbget.Helpers
             var m = _regexSynonymList.Where(o => o.regex.IsMatch(s)).ToArray();
 
             if (m.Length > 1)
-                throw new Exception($"More than one enums of type {typeof(T)} match '{s}'");
+                throw new Exception($"More than one enums of type {typeof(TEnum)} match '{s}'");
 
             if (m.Length == 1)
             {

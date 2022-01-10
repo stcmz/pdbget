@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace pdbget.Helpers
 {
-    public static class EnumAnnotationHelper<TEnum>
-        where TEnum : notnull
+    public static class EnumAnnotationHelper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)]TEnum>
+        where TEnum : notnull, Enum
     {
         private static readonly IReadOnlyDictionary<TEnum, Attribute[]> _attributes =
             (from value in Enum.GetValues(typeof(TEnum)).Cast<TEnum>()

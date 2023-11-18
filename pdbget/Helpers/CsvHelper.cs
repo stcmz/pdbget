@@ -5,14 +5,22 @@ using System.Text;
 
 namespace pdbget.Helpers;
 
+[Serializable]
+public class ClosingQuotationException : Exception
+{
+    public ClosingQuotationException() { }
+    public ClosingQuotationException(string message) : base(message) { }
+    public ClosingQuotationException(string message, Exception inner) : base(message, inner) { }
+}
+
 public static class CsvHelper
 {
-    public static string FormatCsvRow(params object?[] fields)
+    public static string FormatCsvRow(params object[] fields)
     {
         return fields.FormatCsvRow();
     }
 
-    public static string FormatCsvRow(this IEnumerable<object?> fields)
+    public static string FormatCsvRow(this IEnumerable<object> fields)
     {
         return string.Join(",", fields
             .Select(o => o?.ToString())
@@ -29,8 +37,8 @@ public static class CsvHelper
     }
 
     public static IEnumerable<string> FormatCsvRows(
-        this IEnumerable<IEnumerable<object?>> rows,
-        params IEnumerable<object?>[] headerSets)
+        this IEnumerable<IEnumerable<object>> rows,
+        params IEnumerable<object>[] headerSets)
     {
         return headerSets.Concat(rows).Select(o => o.FormatCsvRow());
     }
@@ -56,7 +64,7 @@ public static class CsvHelper
     {
         int maxIndex = columnIds.Max();
 
-        foreach (string[]? fields in rows.Skip(1).Select(o => o.SplitCsvFields(delimiter)))
+        foreach (string[]? fields in rows.Skip(1).SplitCsvFieldsMultiline(delimiter))
         {
             if (maxIndex >= fields.Length)
                 yield return Array.Empty<string>();
@@ -70,7 +78,11 @@ public static class CsvHelper
         char delimiter,
         params string[] columnNames)
     {
-        Dictionary<string, int> headers = rows.First().SplitCsvFields(delimiter).Select((o, i) => new { o, i }).ToDictionary(o => o.o, o => o.i);
+        Dictionary<string, int> headers = rows
+            .First()
+            .SplitCsvFields(delimiter)
+            .Select((o, i) => new { o, i })
+            .ToDictionary(o => o.o, o => o.i);
 
         int[] colIndicies = new int[columnNames.Length];
         int maxIndex = -1;
@@ -88,7 +100,7 @@ public static class CsvHelper
             }
         }
 
-        foreach (string[]? fields in rows.Skip(1).Select(o => o.SplitCsvFields(delimiter)))
+        foreach (string[] fields in rows.Skip(1).SplitCsvFieldsMultiline(delimiter))
         {
             if (maxIndex >= fields.Length)
                 yield return Array.Empty<string>();
@@ -97,17 +109,48 @@ public static class CsvHelper
         }
     }
 
-    public static IEnumerable<Dictionary<string, string>> CsvRowsToDictionaries(this IEnumerable<string> rows, char delimiter = ',')
+    public static IEnumerable<Dictionary<string, string>> CsvRowsToDictionaries(
+        this IEnumerable<string> rows,
+        char delimiter = ',')
     {
         string[] headers = [.. rows.First().SplitCsvFields()];
 
-        foreach (string[]? fields in rows.Skip(1).Select(o => o.SplitCsvFields(delimiter)))
+        foreach (string[] fields in rows.Skip(1).SplitCsvFieldsMultiline(delimiter))
         {
             yield return Enumerable.Range(0, headers.Length).ToDictionary(o => headers[o], o => fields[o]);
         }
     }
 
-    public static string[] SplitCsvFields(this string row, char delimiter = ',')
+    public static IEnumerable<string[]> SplitCsvFieldsMultiline(
+        this IEnumerable<string> rows,
+        char delimiter = ',')
+    {
+        IEnumerator<string> it = rows.GetEnumerator();
+        string lastRow = string.Empty;
+
+        while (it.MoveNext())
+        {
+            string row = lastRow + it.Current;
+            string[]? result = null;
+
+            try
+            {
+                result = row.SplitCsvFields(delimiter);
+                lastRow = string.Empty;
+            }
+            catch (ClosingQuotationException)
+            {
+                lastRow = row;
+            }
+
+            if (result != null && result.Length > 0)
+                yield return result;
+        }
+    }
+
+    public static string[] SplitCsvFields(
+        this string row,
+        char delimiter = ',')
     {
         List<string> list = [];
         StringBuilder sb = new();
@@ -141,7 +184,7 @@ public static class CsvHelper
                 {
                     if (i == row.Length)
                     {
-                        throw new Exception($"Closing quotation mark is missing at col {i}");
+                        throw new ClosingQuotationException($"Closing quotation mark is missing at col {i}");
                     }
                     else if (row[i] == '"')
                     {

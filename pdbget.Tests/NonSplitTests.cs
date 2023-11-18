@@ -97,8 +97,9 @@ public class NonSplitTests
 
         AssertOutputFile("Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("Q9Y5Y4", "7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -134,8 +135,9 @@ public class NonSplitTests
 
         AssertOutputFile("X", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("X", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("X", "Q9Y5Y4", "7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -171,8 +173,9 @@ public class NonSplitTests
 
         AssertOutputFile("6D26.pdb");
         AssertOutputFile("6D27.pdb");
+        AssertOutputFile("7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -208,8 +211,9 @@ public class NonSplitTests
 
         AssertOutputFile("X", "6D26.pdb");
         AssertOutputFile("X", "6D27.pdb");
+        AssertOutputFile("X", "7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -229,8 +233,9 @@ public class NonSplitTests
         AssertOutputFile("5R80.pdb");
         AssertOutputFile("Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("Q9Y5Y4", "7M8W.pdb");
 
-        AssertFileCount(4);
+        AssertFileCount(5);
     }
 
     [TestMethod]
@@ -262,8 +267,9 @@ public class NonSplitTests
         AssertOutputFile("3cl pro", "5R80.pdb");
         AssertOutputFile("Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("Q9Y5Y4", "7M8W.pdb");
 
-        AssertFileCount(4);
+        AssertFileCount(5);
     }
 
     [TestMethod]
@@ -288,9 +294,13 @@ public class NonSplitTests
         AssertOutputFile("3CL pro", "5R80.pdb");
         AssertOutputFile("GPCR", "6D26.pdb");
         AssertOutputFile("GPCR", "6D27.pdb");
+        AssertOutputFile("GPCR", "7M8W.pdb");
         AssertOutputFile("4XT1.pdb");
         AssertOutputFile("4XT3.pdb");
+        AssertOutputFile("7RKF.pdb");
+        AssertOutputFile("7RKM.pdb");
+        AssertOutputFile("7RKN.pdb");
 
-        AssertFileCount(6);
+        AssertFileCount(10);
     }
 }

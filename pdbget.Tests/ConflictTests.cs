@@ -88,6 +88,8 @@ public class ConflictTests
         AssertFileCount(1);
     }
 
+    // Q9Y5Y4: 6D26 and 6D27 split into 20 pieces, 7M8W split into 10 pieces
+
     [TestMethod]
     public async Task DuplicateSinglelineUniProt()
     {
@@ -103,8 +105,9 @@ public class ConflictTests
 
         AssertOutputFile("Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("Q9Y5Y4", "7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -122,8 +125,9 @@ public class ConflictTests
 
         AssertOutputFile("6D26.pdb");
         AssertOutputFile("6D27.pdb");
+        AssertOutputFile("7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -159,8 +163,9 @@ public class ConflictTests
 
         AssertOutputFile("Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("Q9Y5Y4", "7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -196,8 +201,9 @@ public class ConflictTests
 
         AssertOutputFile("X", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("X", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("X", "Q9Y5Y4", "7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -215,8 +221,9 @@ public class ConflictTests
 
         AssertOutputFile("6D26.pdb");
         AssertOutputFile("6D27.pdb");
+        AssertOutputFile("7M8W.pdb");
 
-        AssertFileCount(2);
+        AssertFileCount(3);
     }
 
     [TestMethod]
@@ -234,14 +241,16 @@ public class ConflictTests
 
         AssertOutputFile("X", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("X", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("X", "Q9Y5Y4", "7M8W.pdb");
         AssertOutputFile("X", "6D26.pdb");
         AssertOutputFile("X", "6D27.pdb");
         AssertOutputFile("Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("Q9Y5Y4", "7M8W.pdb");
         AssertOutputFile("6D26.pdb");
         AssertOutputFile("6D27.pdb");
 
-        AssertFileCount(8);
+        AssertFileCount(10);
     }
 
     [TestMethod]
@@ -259,10 +268,12 @@ public class ConflictTests
 
         AssertOutputFile("X", "6D26.pdb");
         AssertOutputFile("X", "6D27.pdb");
+        AssertOutputFile("X", "7M8W.pdb");
         AssertOutputFile("6D26.pdb");
         AssertOutputFile("6D27.pdb");
+        AssertOutputFile("7M8W.pdb");
 
-        AssertFileCount(4);
+        AssertFileCount(6);
     }
 
     [TestMethod]
@@ -280,14 +291,16 @@ public class ConflictTests
 
         AssertOutputFile("X", "Q9Y5Y4", "6D26", "6D26.pdb");
         AssertOutputFile("X", "Q9Y5Y4", "6D27", "6D27.pdb");
+        AssertOutputFile("X", "Q9Y5Y4", "7M8W", "7M8W.pdb");
         AssertOutputFile("X", "6D26", "6D26.pdb");
         AssertOutputFile("X", "6D27", "6D27.pdb");
         AssertOutputFile("Q9Y5Y4", "6D26", "6D26.pdb");
         AssertOutputFile("Q9Y5Y4", "6D27", "6D27.pdb");
+        AssertOutputFile("Q9Y5Y4", "7M8W", "7M8W.pdb");
         AssertOutputFile("6D26", "6D26.pdb");
         AssertOutputFile("6D27", "6D27.pdb");
 
-        AssertFileCount(21 * 8);
+        AssertFileCount(20 * 4 * 2 + 10 * 2 + 10);
     }
 
     [TestMethod]
@@ -305,15 +318,17 @@ public class ConflictTests
 
         AssertOutputFile("original", "X", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("original", "X", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("original", "X", "Q9Y5Y4", "7M8W.pdb");
         AssertOutputFile("original", "X", "6D26.pdb");
         AssertOutputFile("original", "X", "6D27.pdb");
         AssertOutputFile("original", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("original", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("original", "Q9Y5Y4", "7M8W.pdb");
         AssertOutputFile("original", "6D26.pdb");
         AssertOutputFile("original", "6D27.pdb");
 
-        AssertFileCount(20 * 8 + 8);
-        AssertFileCount(8, "original");
+        AssertFileCount(20 * 4 * 2 + 10 * 2 + 10);
+        AssertFileCount(10, "original");
     }
 
     [TestMethod]
@@ -331,11 +346,12 @@ public class ConflictTests
 
         AssertOutputFile("original", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("original", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("original", "Q9Y5Y4", "7M8W.pdb");
         AssertOutputFile("original", "6D26.pdb");
         AssertOutputFile("original", "6D27.pdb");
 
-        AssertFileCount(20 * 8 + 4);
-        AssertFileCount(4, "original");
+        AssertFileCount(20 * 4 * 2 + 10 * 2 + 5);
+        AssertFileCount(5, "original");
     }
 
     [TestMethod]
@@ -351,7 +367,7 @@ public class ConflictTests
         Assert.AreEqual(retCode, 0);
         Assert.AreEqual(string.Empty, stringWriter.ToString());
 
-        AssertFileCount(20 * 8);
+        AssertFileCount(20 * 4 * 2 + 10 * 2);
         AssertFileCount(0, "original");
     }
 }

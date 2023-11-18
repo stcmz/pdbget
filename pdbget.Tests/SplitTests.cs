@@ -94,6 +94,22 @@ public class SplitTests
             }
         },
         {
+            "7M8W",
+            new[]
+            {
+                "A_AminoAcids.pdb",
+                "A_FLC_2403.pdb",
+                "A_NA_2402.pdb",
+                "A_SO4_2404.pdb",
+                "A_SO4_2405.pdb",
+                "A_SO4_2406.pdb",
+                "A_SO4_2407.pdb",
+                "A_SO4_2408.pdb",
+                "A_YCM_308.pdb",
+                "A_YSS_2401.pdb",
+            }
+        },
+        {
             "4XT1",
             new[]
             {
@@ -131,6 +147,48 @@ public class SplitTests
                 "C_NAG_1.pdb",
                 "C_NAG_2.pdb",
                 "C_NAG_3.pdb",
+            }
+        },
+        {
+            "7RKF",
+            new[]
+            {
+                "A_AminoAcids.pdb",
+                "A_GDP_401.pdb",
+                "B_AminoAcids.pdb",
+                "C_AminoAcids.pdb",
+                "D_AminoAcids.pdb",
+                "L_AminoAcids.pdb",
+                "L_NAG_101.pdb",
+                "L_PCA_1.pdb",
+                "R_AminoAcids.pdb",
+            }
+        },
+        {
+            "7RKM",
+            new[]
+            {
+                "A_AminoAcids.pdb",
+                "B_AminoAcids.pdb",
+                "C_AminoAcids.pdb",
+                "D_AminoAcids.pdb",
+                "L_AminoAcids.pdb",
+                "L_PCA_1.pdb",
+                "R_AminoAcids.pdb",
+                "R_CLR_401.pdb",
+            }
+        },
+        {
+            "7RKN",
+            new[]
+            {
+                "A_AminoAcids.pdb",
+                "B_AminoAcids.pdb",
+                "C_AminoAcids.pdb",
+                "D_AminoAcids.pdb",
+                "L_AminoAcids.pdb",
+                "L_PCA_1.pdb",
+                "R_AminoAcids.pdb",
             }
         },
     };
@@ -257,13 +315,17 @@ public class SplitTests
         AssertOutputFile("3CL pro", "5R80", "5R80.pdb");
         AssertOutputFile("GPCR", "Q9Y5Y4", "6D26", "6D26.pdb");
         AssertOutputFile("GPCR", "Q9Y5Y4", "6D27", "6D27.pdb");
+        AssertOutputFile("GPCR", "Q9Y5Y4", "7M8W", "7M8W.pdb");
         AssertOutputFile("P69332", "4XT1", "4XT1.pdb");
         AssertOutputFile("P69332", "4XT3", "4XT3.pdb");
+        AssertOutputFile("P69332", "7RKF", "7RKF.pdb");
+        AssertOutputFile("P69332", "7RKM", "7RKM.pdb");
+        AssertOutputFile("P69332", "7RKN", "7RKN.pdb");
 
         // fragments
         AssertFragments(1, false);
 
-        AssertFileCount(6 + _fragments.Values.Sum(o => o.Length));
+        AssertFileCount(10 + _fragments.Values.Sum(o => o.Length));
     }
 
     [TestMethod]
@@ -283,13 +345,17 @@ public class SplitTests
         AssertOutputFile("original", "3CL pro", "5R80.pdb");
         AssertOutputFile("original", "GPCR", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("original", "GPCR", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("original", "GPCR", "Q9Y5Y4", "7M8W.pdb");
         AssertOutputFile("original", "P69332", "4XT1.pdb");
         AssertOutputFile("original", "P69332", "4XT3.pdb");
+        AssertOutputFile("original", "P69332", "7RKF.pdb");
+        AssertOutputFile("original", "P69332", "7RKM.pdb");
+        AssertOutputFile("original", "P69332", "7RKN.pdb");
 
         // fragments
         AssertFragments(0, false);
 
-        AssertFileCount(6 + _fragments.Values.Sum(o => o.Length));
+        AssertFileCount(10 + _fragments.Values.Sum(o => o.Length));
     }
 
     [TestMethod]
@@ -309,13 +375,17 @@ public class SplitTests
         AssertOutputFile("original", "5R80.pdb");
         AssertOutputFile("original", "Q9Y5Y4", "6D26.pdb");
         AssertOutputFile("original", "Q9Y5Y4", "6D27.pdb");
+        AssertOutputFile("original", "Q9Y5Y4", "7M8W.pdb");
         AssertOutputFile("original", "P69332", "4XT1.pdb");
         AssertOutputFile("original", "P69332", "4XT3.pdb");
+        AssertOutputFile("original", "P69332", "7RKF.pdb");
+        AssertOutputFile("original", "P69332", "7RKM.pdb");
+        AssertOutputFile("original", "P69332", "7RKN.pdb");
 
         // fragments
         AssertFragments(0, false);
 
-        AssertFileCount(6 + _fragments.Values.Sum(o => o.Length));
+        AssertFileCount(10 + _fragments.Values.Sum(o => o.Length));
     }
 
     [TestMethod]
@@ -353,13 +423,17 @@ public class SplitTests
         AssertOutputFile("3CL pro", "5R80", "5R80.pdb");
         AssertOutputFile("GPCR", "6D26", "6D26.pdb");
         AssertOutputFile("GPCR", "6D27", "6D27.pdb");
+        AssertOutputFile("GPCR", "7M8W", "7M8W.pdb");
         AssertOutputFile("4XT1", "4XT1.pdb");
         AssertOutputFile("4XT3", "4XT3.pdb");
+        AssertOutputFile("7RKF", "7RKF.pdb");
+        AssertOutputFile("7RKM", "7RKM.pdb");
+        AssertOutputFile("7RKN", "7RKN.pdb");
 
         // fragments
         AssertFragments(1, true);
 
-        AssertFileCount(6 + _fragments.Values.Sum(o => o.Length));
+        AssertFileCount(10 + _fragments.Values.Sum(o => o.Length));
     }
 
     [TestMethod]
@@ -379,13 +453,17 @@ public class SplitTests
         AssertOutputFile("original", "3CL pro", "5R80.pdb");
         AssertOutputFile("original", "GPCR", "6D26.pdb");
         AssertOutputFile("original", "GPCR", "6D27.pdb");
+        AssertOutputFile("original", "GPCR", "7M8W.pdb");
         AssertOutputFile("original", "4XT1.pdb");
         AssertOutputFile("original", "4XT3.pdb");
+        AssertOutputFile("original", "7RKF.pdb");
+        AssertOutputFile("original", "7RKM.pdb");
+        AssertOutputFile("original", "7RKN.pdb");
 
         // fragments
         AssertFragments(0, true);
 
-        AssertFileCount(6 + _fragments.Values.Sum(o => o.Length));
+        AssertFileCount(10 + _fragments.Values.Sum(o => o.Length));
     }
 
     [TestMethod]
@@ -405,13 +483,17 @@ public class SplitTests
         AssertOutputFile("original", "5R80.pdb");
         AssertOutputFile("original", "6D26.pdb");
         AssertOutputFile("original", "6D27.pdb");
+        AssertOutputFile("original", "7M8W.pdb");
         AssertOutputFile("original", "4XT1.pdb");
         AssertOutputFile("original", "4XT3.pdb");
+        AssertOutputFile("original", "7RKF.pdb");
+        AssertOutputFile("original", "7RKM.pdb");
+        AssertOutputFile("original", "7RKN.pdb");
 
         // fragments
         AssertFragments(0, true);
 
-        AssertFileCount(6 + _fragments.Values.Sum(o => o.Length));
+        AssertFileCount(10 + _fragments.Values.Sum(o => o.Length));
     }
 
     [TestMethod]

@@ -3,45 +3,48 @@ name: .NET Release
 on:
   push:
     tags: [ "v*" ]
-  pull_request:
-    tags: [ "v*" ]
 
 jobs:
   release:
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout code
+    -
+      name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Restore dependencies
+    -
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.x
+    -
+      name: Restore dependencies
       run: dotnet restore
-
-    - name: Build
+    -
+      name: Build
       run: dotnet build --no-restore
-
-    - name: Test
+    -
+      name: Test
       run: dotnet test --no-build --verbosity normal
-
-    - name: Publish Dynamic Release for Linux
+    -
+      name: Publish Dynamic Release for Linux
       run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxFolderProfile
-
-    - name: Publish Dynamic Release for Windows
+    -
+      name: Publish Dynamic Release for Windows
       run: dotnet publish pdbget -c Release -p:PublishProfile=WinFolderProfile
-
-    - name: Publish Dynamic Release for OSX
+    -
+      name: Publish Dynamic Release for OSX
       run: dotnet publish pdbget -c Release -p:PublishProfile=MacFolderProfile
-
-    - name: Publish Static Release for Linux
+    -
+      name: Publish Static Release for Linux
       run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxFolderProfile_static
-
-    - name: Publish Static Release for Windows
+    -
+      name: Publish Static Release for Windows
       run: dotnet publish pdbget -c Release -p:PublishProfile=WinFolderProfile_static
-
-    - name: Publish Static Release for OSX
+    -
+      name: Publish Static Release for OSX
       run: dotnet publish pdbget -c Release -p:PublishProfile=MacFolderProfile_static
-
-    - name: Create Release
+    -
+      name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -64,11 +67,11 @@ jobs:
 
           ### Prerequisite
 
-          * .NET 6.0 SDK or runtime: Follow [the official guide](https://dotnet.microsoft.com/download/dotnet/6.0) to install.
+          * .NET 8.0 SDK or runtime: Follow [the official guide](https://dotnet.microsoft.com/download/dotnet/8.0) to install.
         draft: false
         prerelease: false
-
-    - name: Upload Dynamic Asset for Linux
+    -
+      name: Upload Dynamic Asset for Linux
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,8 +80,8 @@ jobs:
         asset_path: "./pdbget/bin/publish/linux-x64/pdbget"
         asset_name: pdbget_linux_x64
         asset_content_type: application/x-executable
-
-    - name: Upload Dynamic Asset for Windows
+    -
+      name: Upload Dynamic Asset for Windows
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -87,8 +90,8 @@ jobs:
         asset_path: "./pdbget/bin/publish/win-x64/pdbget.exe"
         asset_name: pdbget_win_x64.exe
         asset_content_type: application/vnd.microsoft.portable-executable
-
-    - name: Upload Dynamic Asset for OSX
+    -
+      name: Upload Dynamic Asset for OSX
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -97,8 +100,8 @@ jobs:
         asset_path: "./pdbget/bin/publish/osx-x64/pdbget"
         asset_name: pdbget_mac_x64
         asset_content_type: application/mac-binhex40
-
-    - name: Upload Static Asset for Linux
+    -
+      name: Upload Static Asset for Linux
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,8 +110,8 @@ jobs:
         asset_path: "./pdbget/bin/publish/linux-x64_static/pdbget"
         asset_name: pdbget_linux_x64_static
         asset_content_type: application/x-executable
-
-    - name: Upload Static Asset for Windows
+    -
+      name: Upload Static Asset for Windows
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -117,8 +120,8 @@ jobs:
         asset_path: "./pdbget/bin/publish/win-x64_static/pdbget.exe"
         asset_name: pdbget_win_x64_static.exe
         asset_content_type: application/vnd.microsoft.portable-executable
-
-    - name: Upload Static Asset for OSX
+    -
+      name: Upload Static Asset for OSX
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

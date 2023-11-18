@@ -1,8 +1,7 @@
-﻿namespace pdbget
+﻿namespace pdbget;
+
+internal interface IAction<TOptions>
 {
-    internal interface IAction<TOptions>
-    {
-        int Setup(TOptions options);
-        int Run();
-    }
+    int Setup(TOptions options);
+    int Run();
 }

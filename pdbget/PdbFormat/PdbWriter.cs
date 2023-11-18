@@ -1,46 +1,46 @@
 ﻿using System;
 using System.IO;
 
-namespace pdbget.PdbFormat
+namespace pdbget.PdbFormat;
+
+public class PdbWriter : IDisposable
 {
-    public class PdbWriter : IDisposable
+    private readonly TextWriter _writer;
+
+    public PdbWriter(TextWriter writer)
     {
-        private readonly TextWriter _writer;
+        _writer = writer;
+    }
 
-        public PdbWriter(TextWriter writer)
+    public PdbWriter(Stream stream)
+    {
+        _writer = new StreamWriter(stream)
         {
-            _writer = writer;
-        }
+            NewLine = "\n"
+        };
+    }
 
-        public PdbWriter(Stream stream)
+    public PdbWriter(string path)
+    {
+        _writer = new StreamWriter(path)
         {
-            _writer = new StreamWriter(stream)
-            {
-                NewLine = "\n"
-            };
-        }
+            NewLine = "\n"
+        };
+    }
 
-        public PdbWriter(string path)
-        {
-            _writer = new StreamWriter(path)
-            {
-                NewLine = "\n"
-            };
-        }
+    public void WriteRecord(Record line)
+    {
+        _writer.WriteLine(line.ToRow());
+    }
 
-        public void WriteRecord(Record line)
-        {
-            _writer.WriteLine(line.ToRow());
-        }
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _writer.Dispose();
+    }
 
-        public void Dispose()
-        {
-            _writer.Dispose();
-        }
-
-        public void Close()
-        {
-            _writer.Close();
-        }
+    public void Close()
+    {
+        _writer.Close();
     }
 }

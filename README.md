@@ -33,19 +33,19 @@ pdbget accepts the following ways of input:
 Supported operating systems and compilers
 -----------------------------------------
 
-All systems with [.NET SDK v6.0] or higher supported, e.g.
+All systems with [.NET SDK v8.0] or higher supported, e.g.
 * Windows 10 version 1607 or higher
 * macOS 10.15 "Catalina" or higher
-* most of current Linux distros: Ubuntu, CentOS, openSUSE, RHEL, Fedora, Debian, Alpine, SLES
+* most of current Linux distros: Ubuntu, openSUSE, RHEL, Fedora, Debian, Alpine, SLES, Oracle Linux
 
-See [official document](https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md) for more details.
+See [official document](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md) for more details.
 
 Compilation from source code
 ----------------------------
 
 ### Compiler and SDK
 
-pdbget compiles with [.NET SDK v6.0]. Follow the official guide to download and install the SDK before the build. The SDK also comes with the Visual Studio 2022 installer version 17.0 or higher.
+pdbget compiles with [.NET SDK v8.0]. Follow the official guide to download and install the SDK before the build. The SDK also comes with the Visual Studio 2022 installer version 17.8 or higher.
 
 The Visual Studio solution and project files, as well as the vscode settings are provided. One may open `pdbget.sln` in Visual Studio 2022 and do a rebuild (predefined profiles for Windows/Linux/macOS are also provided), or open the cloned repository in vscode and run the build task.
 
@@ -224,4 +224,4 @@ Author
 
 
 [Maozi Chen]: https://www.linkedin.com/in/maozichen/
-[.NET SDK v6.0]: https://dotnet.microsoft.com/download/dotnet/6.0
+[.NET SDK v8.0]: https://dotnet.microsoft.com/download/dotnet/8.0

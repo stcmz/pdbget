@@ -1,18 +1,17 @@
 ﻿using System;
 
-namespace pdbget
+namespace pdbget;
+
+[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
+public sealed class MatchAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
-    public sealed class MatchAttribute : Attribute
+    public string[] Patterns { get; }
+
+    public MatchAttribute(params string[] patterns)
     {
-        public string[] Patterns { get; }
-
-        public MatchAttribute(params string[] patterns)
-        {
-            Patterns = patterns;
-        }
-
-        public bool CaseSensitive { get; set; } = true;
-        public bool UseRegex { get; set; } = false;
+        Patterns = patterns;
     }
+
+    public bool CaseSensitive { get; set; } = true;
+    public bool UseRegex { get; set; } = false;
 }

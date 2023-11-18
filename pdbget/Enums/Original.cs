@@ -1,10 +1,9 @@
-﻿namespace pdbget
+﻿namespace pdbget;
+
+internal enum Original
 {
-    internal enum Original
-    {
-        inplace,
-        separate,
-        nolabel,
-        delete,
-    }
+    inplace,
+    separate,
+    nolabel,
+    delete,
 }

@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Threading;
 
 namespace pdbget.Services;
 
-public partial class UniProt
+// API reference: https://www.uniprot.org/help/api_queries
+public class UniProt
 {
     public string Entry { get; }
-    public string Uri => $"https://www.uniprot.org/uniprot/{Entry}";
+    public string Uri => $"https://rest.uniprot.org/uniprotkb/search?query={(IsReviewed != null ? $"reviewed:{IsReviewed.ToString()!.ToLower()}+AND+" : "")}{Entry}";
+    public bool? IsReviewed { get; set; } = true;
 
     public UniProt(string entry)
     {
@@ -22,23 +24,25 @@ public partial class UniProt
         Entry = $"{protein}_{species}";
     }
 
-    private string? GetHtml()
+    private string? GetJson()
     {
         int[]? waitTime = [0, 500, 2000];
-        string? html = null;
+        string? json = null;
 
-        for (int i = 0; html == null; i++)
+        for (int i = 0; json == null; i++)
         {
             if (waitTime[i] > 0)
             {
-                //Logger.Warning($"[UniProt] Failed to get html for {Entry}, retry in {waitTime[i]}ms");
+                //Logger.Warning($"[UniProt] Failed to get json for {Entry}, retry in {waitTime[i]}ms");
                 Thread.Sleep(waitTime[i]);
             }
 
             try
             {
                 using HttpClient wc = new();
-                html = wc.GetStringAsync(Uri).Result;
+                json = wc.GetStringAsync(Uri).Result;
+                if (string.IsNullOrEmpty(json) || json.Trim() == "{\"results\":[]}")
+                    json = null;
             }
             catch (Exception)
             {
@@ -46,41 +50,30 @@ public partial class UniProt
                     return null;
             }
         }
-        return html;
+        return json;
     }
 
     public record StructRecord
     (
         string UniProtId,
         string PdbEntry,
-        string Method,
-        string Resolution,
-        string Chain,
-        string Positions
+        string? Method,
+        string? Resolution,
+        string? Chain,
+        string? Positions
     );
 
     public StructRecord[]? GetStructures()
     {
-        string? html = GetHtml();
+        string? json = GetJson();
 
-        if (html == null)
+        if (json == null)
             return null;
 
-        StructRecord[] rs = StructRecordsRegex().Matches(html)
-            .Cast<Match>()
-            .Select(o => new StructRecord
-            (
-                Entry,
-                o.Groups[1].Value,
-                o.Groups[2].Value,
-                o.Groups[3].Value,
-                o.Groups[4].Value,
-                o.Groups[5].Value
-            ))
-            .ToArray();
-
         Dictionary<string, StructRecord> dict = [];
-        foreach (StructRecord? r in rs)
+
+        // Detect duplicates
+        foreach (StructRecord? r in Parse(json))
         {
             if (!dict.TryGetValue(r.PdbEntry, out StructRecord? value))
             {
@@ -92,10 +85,70 @@ public partial class UniProt
             }
         }
 
-        return [.. dict.Values];
+        return [.. dict.Values.OrderBy(o => o.PdbEntry)];
     }
 
-    //                                                                 1pdb_entry                   2method          3resolution      4chain                    5positions
-    [GeneratedRegex(@"href=""https://www.ebi.ac.uk/pdbe-srv/view/entry/(\w+)""[^<>]*>\1</a></td><td>([^<>]+)</td><td>([^<>]+)</td><td>([^<>]+)</td><td><a[^<>]+>([^<>]+)</a>")]
-    private static partial Regex StructRecordsRegex();
+    private IEnumerable<StructRecord> Parse(string json)
+    {
+        string uniprotId = Entry;
+
+        using JsonDocument doc = JsonDocument.Parse(json);
+        // Access properties using the DOM API
+        JsonElement root = doc.RootElement;
+        JsonElement results = root.GetProperty("results");
+
+        JsonElement[] matchedResults = results
+            .EnumerateArray()
+            .Where(o => o.GetProperty("uniProtkbId").GetString() == uniprotId
+                || o.GetProperty("primaryAccession").GetString() == uniprotId)
+            .ToArray();
+
+        if (matchedResults.Length == 0)
+        {
+            //Logger.Current.LogError("No matching result for uniProt uniProt Id {uniprotId}", uniprotId);
+            yield break;
+        }
+
+        JsonElement result = matchedResults[0];
+
+        string uniprotKbId = result.GetProperty("uniProtkbId").GetString()!;
+        JsonElement organism = result.GetProperty("organism");
+
+        IEnumerable<JsonElement> pdbs = result
+            .GetProperty("uniProtKBCrossReferences")
+            .EnumerateArray()
+            .Where(o => o.GetProperty("database").GetString() == "PDB");
+
+        foreach (JsonElement pdb in pdbs)
+        {
+            string? pdbId = pdb.GetProperty("id").GetString();
+
+            if (pdbId == null || pdbId.Length != 4)
+            {
+                //Logger.Current.LogError("Non PDB entry {PdbId} discovered under PDB database for {Entry}", pdbId, Entry);
+                continue;
+            }
+
+            Dictionary<string, string?> props = pdb.GetProperty("properties")
+                .EnumerateArray()
+                .ToDictionary(p => p.GetProperty("key").GetString()!, p => p.GetProperty("value").GetString());
+
+            props.TryGetValue("Method", out string? method);
+            props.TryGetValue("Resolution", out string? resolution);
+            props.TryGetValue("Chains", out string? chains);
+
+            string? chain = null, positions = null;
+            if (chains != null)
+            {
+                string[] fields = chains.Split('=');
+                if (fields.Length == 2)
+                {
+                    chain = fields[0];
+                    positions = fields[1];
+                }
+            }
+
+            yield return new StructRecord(Entry, pdbId, method, resolution, chain, positions);
+        }
+    }
 }

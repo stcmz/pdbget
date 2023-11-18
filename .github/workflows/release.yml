@@ -26,23 +26,41 @@ jobs:
       name: Test
       run: dotnet test --no-build --verbosity normal
     -
-      name: Publish Dynamic Release for Linux
-      run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxFolderProfile
+      name: Publish Dynamic Release for Linux x86-64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxX64FolderProfile
     -
-      name: Publish Dynamic Release for Windows
-      run: dotnet publish pdbget -c Release -p:PublishProfile=WinFolderProfile
+      name: Publish Dynamic Release for Linux arm64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxArm64FolderProfile
     -
-      name: Publish Dynamic Release for OSX
-      run: dotnet publish pdbget -c Release -p:PublishProfile=MacFolderProfile
+      name: Publish Dynamic Release for Windows x86-64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=WinX64FolderProfile
     -
-      name: Publish Static Release for Linux
-      run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxFolderProfile_static
+      name: Publish Dynamic Release for Windows arm64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=WinArm64FolderProfile
     -
-      name: Publish Static Release for Windows
-      run: dotnet publish pdbget -c Release -p:PublishProfile=WinFolderProfile_static
+      name: Publish Dynamic Release for OSX x86-64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=MacX64FolderProfile
     -
-      name: Publish Static Release for OSX
-      run: dotnet publish pdbget -c Release -p:PublishProfile=MacFolderProfile_static
+      name: Publish Dynamic Release for OSX arm64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=MacArm64FolderProfile
+    -
+      name: Publish Static Release for Linux x86-64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxX64FolderProfile_static
+    -
+      name: Publish Static Release for Linux arm64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=LinuxArm64FolderProfile_static
+    -
+      name: Publish Static Release for Windows x86-64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=WinX64FolderProfile_static
+    -
+      name: Publish Static Release for Windows arm64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=WinArm64FolderProfile_static
+    -
+      name: Publish Static Release for OSX x86-64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=MacX64FolderProfile_static
+    -
+      name: Publish Static Release for OSX arm64
+      run: dotnet publish pdbget -c Release -p:PublishProfile=MacArm64FolderProfile_static
     -
       name: Create Release
       id: create_release
@@ -55,7 +73,7 @@ jobs:
         body: |
           ## Release Note
 
-          Please refer to the commit messages for what's new in this release. We provide prebuilt binaries here for the x86-64 architecture as-is without any warranty. Follow the developer's guide on the project readme should you need to customize your build or for any other architecture.
+          Please refer to the commit messages for what's new in this release. We provide prebuilt binaries here for the x86-64 and arm64 architectures as-is without any warranty. Follow the developer's guide on the project readme should you need to customize your build or for any other architecture.
 
           ### Deployment guide
 
@@ -71,7 +89,7 @@ jobs:
         draft: false
         prerelease: false
     -
-      name: Upload Dynamic Asset for Linux
+      name: Upload Dynamic Asset for Linux x86-64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -81,7 +99,17 @@ jobs:
         asset_name: pdbget_linux_x64
         asset_content_type: application/x-executable
     -
-      name: Upload Dynamic Asset for Windows
+      name: Upload Dynamic Asset for Linux arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./pdbget/bin/publish/linux-arm64/pdbget"
+        asset_name: pdbget_linux_arm64
+        asset_content_type: application/x-executable
+    -
+      name: Upload Dynamic Asset for Windows x86-64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -91,7 +119,17 @@ jobs:
         asset_name: pdbget_win_x64.exe
         asset_content_type: application/vnd.microsoft.portable-executable
     -
-      name: Upload Dynamic Asset for OSX
+      name: Upload Dynamic Asset for Windows arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./pdbget/bin/publish/win-arm64/pdbget.exe"
+        asset_name: pdbget_win_arm64.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
+    -
+      name: Upload Dynamic Asset for OSX x86-64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,7 +139,17 @@ jobs:
         asset_name: pdbget_mac_x64
         asset_content_type: application/mac-binhex40
     -
-      name: Upload Static Asset for Linux
+      name: Upload Dynamic Asset for OSX arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./pdbget/bin/publish/osx-arm64/pdbget"
+        asset_name: pdbget_mac_arm64
+        asset_content_type: application/mac-binhex40
+    -
+      name: Upload Static Asset for Linux x86-64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -111,7 +159,17 @@ jobs:
         asset_name: pdbget_linux_x64_static
         asset_content_type: application/x-executable
     -
-      name: Upload Static Asset for Windows
+      name: Upload Static Asset for Linux arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./pdbget/bin/publish/linux-arm64_static/pdbget"
+        asset_name: pdbget_linux_arm64_static
+        asset_content_type: application/x-executable
+    -
+      name: Upload Static Asset for Windows x86-64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,7 +179,17 @@ jobs:
         asset_name: pdbget_win_x64_static.exe
         asset_content_type: application/vnd.microsoft.portable-executable
     -
-      name: Upload Static Asset for OSX
+      name: Upload Static Asset for Windows arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./pdbget/bin/publish/win-arm64_static/pdbget.exe"
+        asset_name: pdbget_win_arm64_static.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
+    -
+      name: Upload Static Asset for OSX x86-64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -129,4 +197,14 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: "./pdbget/bin/publish/osx-x64_static/pdbget"
         asset_name: pdbget_mac_x64_static
+        asset_content_type: application/mac-binhex40
+    -
+      name: Upload Static Asset for OSX arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./pdbget/bin/publish/osx-arm64_static/pdbget"
+        asset_name: pdbget_mac_arm64_static
         asset_content_type: application/mac-binhex40

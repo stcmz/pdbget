@@ -1,5 +1,6 @@
 ﻿using pdbget.Helpers;
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.CommandLine.Parsing;
@@ -20,7 +21,8 @@ public static class Program
         {
             new Option<FileInfo>(
                 [ "-l", "--list" ],
-                "A file containing the downloading entry list (can be a mix of PDB entries and UniProt entries, and optionally with a label per line in format 'label1: entry1 entry2'). If --list absent, the program will read from standard input (or pipe input if redirected)"),
+                "A file containing the downloading entry list (can be a mix of PDB entries and UniProt entries, and optionally with a label per line in format 'label1: entry1 entry2'). If --list absent, the program will read from standard input (or pipe input if redirected)")
+            .ExistingOnly(),
             new Option<DirectoryInfo>(
                 [ "-o", "--out" ],
                 "A directory to store the downloaded PDB files and possibly the split chains [default: .]"),
@@ -50,7 +52,7 @@ public static class Program
         // Add a validator to the pipeline for validating directory options
         rootCommand.AddValidator(cr =>
         {
-            System.Collections.Generic.IReadOnlyList<Token> x = cr.Tokens;
+            IReadOnlyList<Token> x = cr.Tokens;
         });
 
         // The parameters of the handler method are matched according to the names of the options
@@ -58,7 +60,20 @@ public static class Program
         {
             using DownloadAction action = new();
 
-            int retCode = action.Setup(options);
+            // System.CommandLine package has an issue when publish in self-contained mode
+            // https://github.com/dotnet/command-line-api/issues/2297
+            // Initialize the options here as a workaround
+            int retCode = action.Setup(options ?? new()
+            {
+                List = null,
+                Out = null,
+                Split = false,
+                Flatten = false,
+                Original = Original.inplace,
+                Overwrite = false,
+                Threads = Environment.ProcessorCount,
+                Timeout = 30
+            });
 
             if (retCode != 0)
                 return retCode;

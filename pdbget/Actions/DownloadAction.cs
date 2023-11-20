@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace pdbget;
@@ -28,7 +29,12 @@ internal class DownloadAction : IAction<DownloadOptions>, IDisposable
         if (options.List == null)
         {
             stream = Console.OpenStandardInput();
-            Logger.Info("Enter PDB or UniProt entries to download, press Ctrl+Z and then Enter to exit\n");
+            string keys;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                keys = "press Ctrl+Z and then Enter";
+            else
+                keys = "press Ctrl+D";
+            Logger.Info($"Enter PDB or UniProt entries to download, {keys} to exit\n");
         }
         else
         {

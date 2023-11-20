@@ -60,20 +60,7 @@ public static class Program
         {
             using DownloadAction action = new();
 
-            // System.CommandLine package has an issue when publish in self-contained mode
-            // https://github.com/dotnet/command-line-api/issues/2297
-            // Initialize the options here as a workaround
-            int retCode = action.Setup(options ?? new()
-            {
-                List = null,
-                Out = null,
-                Split = false,
-                Flatten = false,
-                Original = Original.inplace,
-                Overwrite = false,
-                Threads = Environment.ProcessorCount,
-                Timeout = 30
-            });
+            int retCode = action.Setup(options);
 
             if (retCode != 0)
                 return retCode;
